@@ -1,0 +1,157 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{cja-manuscript}[2026/10/13 CJA manuscript layout]
+% Author-side layout adapted from the supplied published CJA examples.
+% Masthead and production artwork are extracted from the supplied published CJA paper.
+% Unassigned article publication fields remain explicit placeholders.
+\RequirePackage{titlesec}
+\RequirePackage{fancyhdr}
+\RequirePackage{caption}
+\RequirePackage{fix-cm}
+\geometry{reset,twoside,paperwidth=210mm,paperheight=280mm,
+  left=16mm,right=19mm,top=18mm,bottom=22.45mm,
+  headheight=10pt,headsep=7pt,footskip=12pt,columnsep=6.7mm}
+
+\makeatletter
+\definecolor{cjaheadergray}{HTML}{C0C0C0}
+\definecolor{cjapublicationblue}{RGB}{0,145,180}
+% All publication wording is supplied by the main TeX file.  Empty fallbacks
+% keep this layout package reusable without hiding editable text in the style.
+\providecommand{\cjapublicationinfo}{}
+\providecommand{\cjashortauthor}{}
+\providecommand{\cjacorrespondence}{}
+\providecommand{\cjapeerreviewtext}{}
+\providecommand{\cjapublicationdoi}{}
+\providecommand{\cjacopyrighttext}{}
+\providecommand{\cjalicenseinfo}{}
+\renewcommand\normalsize{%
+  \@setfontsize\normalsize{9}{11}%
+  \abovedisplayskip=6pt plus 2pt minus 2pt
+  \abovedisplayshortskip=2pt plus 1pt
+  \belowdisplayshortskip=5pt plus 2pt minus 2pt
+  \belowdisplayskip=6pt plus 2pt minus 2pt
+  \let\@listi\@listI}
+\renewcommand\small{\@setfontsize\small{8}{9.5}}
+\renewcommand\footnotesize{\@setfontsize\footnotesize{7.5}{9}}
+\renewcommand\scriptsize{\@setfontsize\scriptsize{6}{7.2}}
+\AtBeginDocument{\normalsize\raggedbottom}
+\setlength\parindent{1em}
+\setlength\parskip{0pt}
+\setlength\footnotesep{6pt}
+\setlength\textfloatsep{11pt plus 2pt minus 2pt}
+\setlength\floatsep{9pt plus 2pt minus 2pt}
+\setlength\intextsep{9pt plus 2pt minus 2pt}
+\setlength\mathindent{0pt}
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{2}
+\renewcommand\topfraction{.9}
+\renewcommand\bottomfraction{.8}
+\renewcommand\textfraction{.08}
+\renewcommand\floatpagefraction{.75}
+\renewcommand\dbltopfraction{.9}
+\renewcommand\dblfloatpagefraction{.75}
+
+\titleformat{\section}{\normalfont\normalsize\bfseries}{\thesection.}{.5em}{}
+\titleformat{\subsection}{\normalfont\normalsize\itshape}{\thesubsection.}{.5em}{}
+\titleformat{\subsubsection}{\normalfont\normalsize\itshape}{\thesubsubsection.}{.5em}{}
+\titlespacing*{\section}{0pt}{12pt plus 2pt minus 2pt}{7pt}
+\titlespacing*{\subsection}{0pt}{10pt plus 2pt minus 2pt}{5pt}
+\titlespacing*{\subsubsection}{0pt}{8pt}{4pt}
+
+\captionsetup{font=small,labelfont=bf,labelsep=space,
+  justification=justified,singlelinecheck=false,skip=5pt}
+\captionsetup[figure]{name=Fig.}
+\captionsetup[subfloat]{font=footnotesize,labelfont=footnotesize,textfont=footnotesize,
+  justification=centering,singlelinecheck=true}
+\hypersetup{linkcolor=black,citecolor=blue,urlcolor=blue}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\thepage}
+\fancyhead[R]{\small\cjashortauthor}
+\renewcommand\headrulewidth{.3pt}
+\renewcommand\footrulewidth{0pt}
+\fancypagestyle{pprintTitle}{%
+  \fancyhf{}%
+  \fancyhead[L]{\fontsize{8}{9.5}\selectfont\color{cjapublicationblue}\cjapublicationinfo}%
+  \renewcommand\headrulewidth{0pt}}
+
+\renewcommand\footnoterule{\kern-3pt\hrule width\columnwidth height .35pt\kern2.65pt}
+\def\printFirstPageNotes{%
+  \ifdoubleblind\else
+    \ifx\@cornotes\@empty\else\@cornotes\fi
+    \begingroup
+      \let\thefootnote\relax
+      \footnotetext{%
+        \fontsize{8}{9.5}\selectfont
+        \cjacorrespondence\par
+        \vskip3pt
+        \cjapeerreviewtext\par
+        \vskip6pt
+        \noindent\includegraphics[width=\columnwidth]{cja-production-hosting.png}}
+    \endgroup
+  \fi
+  \gdef\thefootnote{\arabic{footnote}}}
+
+\AddToHook{shipout/foreground}{%
+  \ifnum\value{page}=1\relax
+    \begin{tikzpicture}[remember picture,overlay]
+      \node[anchor=south west,inner sep=0pt] at
+        ([xshift=16mm,yshift=10.4mm]current page.south west){%
+        \parbox{\textwidth}{\fontsize{8}{9.5}\selectfont\urlstyle{same}
+          \textcolor{cjapublicationblue}{\expandafter\nolinkurl\expandafter{\cjapublicationdoi}}\par
+          \cjacopyrighttext\par
+          \cjalicenseinfo}};
+    \end{tikzpicture}
+  \fi}
+
+\renewenvironment{abstract}{%
+  \global\setbox\absbox=\vbox\bgroup
+  \hsize=.722\textwidth\linewidth=\hsize
+  \fontsize{8.5}{10.5}\selectfont
+  \parindent=0pt\parskip=0pt
+  \noindent\textbf{Abstract}\quad\ignorespaces
+}{\par\egroup}
+\def\keyword{%
+  \global\setbox\keybox=\vbox\bgroup
+  \hsize=.189\textwidth\linewidth=\hsize
+  \fontsize{8}{10}\selectfont\raggedright
+  \parindent=0pt\parskip=0pt
+  \def\sep{\unskip;\par}%
+  \noindent\textbf{KEYWORDS}\par\vskip7pt\ignorespaces}
+\def\endkeyword{\par\egroup}
+
+\long\def\MaketitleBox{%
+  \resetTitleCounters
+  \def\baselinestretch{1}%
+  \begingroup
+  \parindent=0pt\parskip=0pt
+  \noindent\includegraphics[width=\textwidth]{cja-published-masthead.png}\par
+  \vskip12pt
+  {\fontsize{10}{12}\selectfont\bfseries FULL LENGTH ARTICLE\par}
+  \vskip9pt
+  {\fontsize{14}{16.5}\selectfont\bfseries\raggedright\@title\par}
+  \vskip18pt
+  {\fontsize{12}{14}\selectfont\bfseries\raggedright\elsauthors\par}
+  \vskip15pt
+  {\fontsize{8}{9.5}\selectfont\itshape\raggedright\elsaddress\par}
+  \vskip14pt
+  \noindent
+  \begin{minipage}[t]{.2172\textwidth}
+    \vspace{0pt}%
+    \begingroup\setlength\fboxsep{7pt}%
+    \colorbox{black!8}{\parbox[t][\dimexpr\ht\absbox+\dp\absbox+2pt\relax][t]{\dimexpr\linewidth-14pt\relax}{\unvbox\keybox}}%
+    \endgroup
+  \end{minipage}\hfill
+  \begin{minipage}[t]{.722\textwidth}
+    \vspace{0pt}\hrule height .35pt\vskip8pt
+    \unvbox\absbox\vskip8pt\hrule height .35pt
+  \end{minipage}
+  \par\vskip14pt
+  \endgroup
+}
+
+\setlength\bibsep{3pt plus .5pt}
+\renewcommand\bibfont{\small}
+\renewcommand\bibnumfmt[1]{#1.}
+\makeatother
+\endinput
